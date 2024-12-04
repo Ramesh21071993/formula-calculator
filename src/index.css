@@ -11,3 +11,47 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.page-header {
+  position: fixed;
+  background-color: white;
+  width: 100%;
+}
+
+.product-list {
+  padding-top: 8%;
+}
+
+.online-store {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.product-details {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  margin-bottom: 10px;
+}
+
+.product-image-container {
+  margin-right: 10px;
+}
+
+.product-image {
+  height: 100px;
+  width: 100px;
+}
+
+.input-container, .submit-btn {
+  margin-top: 10px;
+}
+
+.input-label {
+  margin-right: 10px;
+}
+
+.input-error {
+  color: red;
+  margin-left: 10px;
+}
