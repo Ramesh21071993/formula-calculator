@@ -2,13 +2,23 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { Product } from "../types/products";
 
 interface ProductContextType {
-  products: Product[];
   setProducts: (products: Product[]) => void;
+  getProducts: () => Product[] | undefined;
   getProduct: (productId?: number | string) => Product | undefined;
+  setSortByName: (sort: string) => void;
+  setSortByPrice: (sort: string) => void;
+  setSearch: (searchTerm: string) => void;
+  getSortFilter: () => SortFilter;
 }
 
 interface Props {
   children: React.ReactNode;
+}
+
+interface SortFilter {
+  sortByName: string;
+  sortByPrice: string;
+  searchTerm: string;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -16,7 +26,7 @@ const ProductContext = createContext<ProductContextType | undefined>(undefined);
 export const useProduct = () => {
   const context = useContext(ProductContext);
   if (!context) {
-    throw new Error("ProductsProvider not found");
+    throw new Error("Context Data not found");
   }
   return context;
 };
@@ -24,14 +34,20 @@ export const useProduct = () => {
 export const ProductsProvider: React.FC<Props> = ({ children }) => {
   const [productsItems, setProductsItems] = useState<Product[]>([]);
 
+  const [sortFilter, setSortFilter] = useState<SortFilter>({
+    sortByName: "",
+    sortByPrice: "",
+    searchTerm: "",
+  });
+
   // generating products at the time of load.
   useEffect(() => {
-    getProducts().then((results) => {
+    generateProducts().then((results) => {
       setProductsItems(results || []);
     });
   }, []);
 
-  const getProducts = async () => {
+  const generateProducts = async () => {
     const resString = await fetch("https://fakestoreapi.com/products");
     const resArray = (await resString.json()) || [];
     return resArray.map(({ id, image, description, price, title }: any) => {
@@ -52,12 +68,75 @@ export const ProductsProvider: React.FC<Props> = ({ children }) => {
   };
 
   const getProduct = (productId?: number | string) => {
-    return productsItems.find((product) => product.id !== productId);
+    return productsItems.find((product) => product.id == productId);
+  };
+
+  const getProducts = () => {
+    // filter by name
+    let newProducts = productsItems.filter(
+      (product) =>
+        !sortFilter.searchTerm ||
+        product.name.toLowerCase().includes(sortFilter.searchTerm.toLowerCase())
+    );
+
+    // sort by price
+    if (sortFilter.sortByPrice) {
+      if (sortFilter.sortByPrice === "lowToHigh") {
+        // Sort by price: low to high
+        newProducts.sort((a, b) => a.offerPrice - b.offerPrice);
+      } else if (sortFilter.sortByPrice === "highToLow") {
+        // Sort by price: high to low
+        newProducts.sort((a, b) => b.offerPrice - a.offerPrice);
+      }
+    }
+
+    // sort by name
+    if (sortFilter.sortByName) {
+      if (sortFilter.sortByName === "asc") {
+        // Sort by Name: A-Z
+        newProducts.sort((a, b) => a.name.localeCompare(b.name));
+      } else if (sortFilter.sortByName === "desc") {
+        // Sort by Name: Z-A
+        newProducts.sort((a, b) => b.name.localeCompare(a.name));
+      }
+    }
+    return newProducts;
+  };
+
+  const getSortFilter = () => sortFilter;
+
+  const setSortByName = (sortByName: string) => {
+    setSortFilter({
+      ...sortFilter,
+      sortByName,
+    });
+  };
+
+  const setSortByPrice = (sortByPrice: string) => {
+    setSortFilter({
+      ...sortFilter,
+      sortByPrice,
+    });
+  };
+
+  const setSearch = (searchTerm: string) => {
+    setSortFilter({
+      ...sortFilter,
+      searchTerm,
+    });
   };
 
   return (
     <ProductContext.Provider
-      value={{ products: productsItems, setProducts, getProduct }}
+      value={{
+        setProducts,
+        getProducts,
+        getProduct,
+        setSortByName,
+        setSortByPrice,
+        setSearch,
+        getSortFilter,
+      }}
     >
       {children}
     </ProductContext.Provider>

@@ -16,6 +16,11 @@ code {
   position: fixed;
   background-color: white;
   width: 100%;
+  padding-bottom: 10px;
+}
+
+.sort-container {
+  display: flex;
 }
 
 .product-list {
@@ -34,7 +39,7 @@ code {
   margin-bottom: 10px;
 }
 
-.product-image-container {
+.product-image-container, .search-section, .sorting-section {
   margin-right: 10px;
 }
 

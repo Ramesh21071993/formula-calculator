@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProduct } from "../context/ProductContext";
 import ProductDetails from "../components/Product";
 
 const Checkout: React.FC = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
   const { getProduct } = useProduct();
 
   const productDetails = getProduct(productId);
@@ -75,14 +74,13 @@ const Checkout: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // if (validateInputs()) {
+    if (validateInputs()) {
       moveToConfirmation();
-    // }
+    }
   };
 
   const moveToConfirmation = () => {
     navigate(`/confirmation/${productId}`, {
-      state: { from: location },
       replace: true,
     });
   };
