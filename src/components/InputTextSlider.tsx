@@ -1,6 +1,7 @@
 import React, { ChangeEvent, memo } from "react";
 import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
+import { FeatureFlags } from "../utils";
 
 interface Props {
   name?: string;
@@ -25,21 +26,23 @@ const InputTextSlider: React.FC<Props> = ({
       <input
         type="text"
         name={name}
-        value={value || ''}
+        value={value || ""}
         onChange={onChange}
         className="textbox-input"
       />
       {/* Slider */}
-      <input
-        type="range"
-        name={name}
-        min="0"
-        max="100"
-        step="1"
-        value={value || ''}
-        onChange={onChange}
-        className="slider-input"
-      />
+      {FeatureFlags.SHOW_SLIDER && (
+        <input
+          type="range"
+          name={name}
+          min="0"
+          max="100"
+          step="1"
+          value={value || ""}
+          onChange={onChange}
+          className="slider-input"
+        />
+      )}
     </div>
   );
 };

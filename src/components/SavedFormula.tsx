@@ -2,6 +2,7 @@ import React, { memo } from "react";
 import Latex from "react-latex-next";
 import "katex/dist/katex.min.css";
 import { useFormulaContext } from "../context";
+import { FeatureFlags } from "../utils";
 
 const SavedFormulas: React.FC = () => {
   const { getSavedFormulas, setFormula, deleteFormula } = useFormulaContext();
@@ -21,7 +22,14 @@ const SavedFormulas: React.FC = () => {
           >
             <Latex>{`$${formula}$`}</Latex>
           </div>
-          <div className="formula-section" onClick={() => deleteFormula(formula)}>Delete</div>
+          {FeatureFlags.ENABLE_FORMULA_DELETE && (
+            <div
+              className="formula-section"
+              onClick={() => deleteFormula(formula)}
+            >
+              Delete
+            </div>
+          )}
         </div>
       ))}
     </div>

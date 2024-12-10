@@ -6,7 +6,8 @@ import {
   isOnlyNumbers,
   isValidFormula,
   getVariables,
-  replaceVariableValue
+  replaceVariableValue,
+  FeatureFlags
 } from "../utils";
 import InputTextSlider from "../components/InputTextSlider";
 import InputText from "../components/InputText";
@@ -117,7 +118,7 @@ const FormulaCalculator: React.FC = () => {
       <h1>Formula Calculator</h1>
 
       {/* Display the formula using LaTeX */}
-      {formula && (
+      {FeatureFlags.SHOW_PREVIEW && formula && (
         <div className="formula-display">
           <Latex>{`$${formula}$`}</Latex>
         </div>
@@ -145,15 +146,17 @@ const FormulaCalculator: React.FC = () => {
       </div>
 
       {/* Save button */}
-      <div>
-        <button
-          disabled={isDisabled}
-          className={`${isDisabled ? "disabled" : ""}`}
-          onClick={() => saveFormula(formula)}
-        >
-          Save
-        </button>
-      </div>
+      {FeatureFlags.ENABLE_SAVE_FORMULA && (
+        <div>
+          <button
+            disabled={isDisabled}
+            className={`${isDisabled ? "disabled" : ""}`}
+            onClick={() => saveFormula(formula)}
+          >
+            Save
+          </button>
+        </div>
+      )}
 
       {/* Display the result */}
       {result !== null && !resultError && (
@@ -169,7 +172,7 @@ const FormulaCalculator: React.FC = () => {
           <p>{resultError}</p>
         </div>
       )}
-      <SavedFormula />
+      {FeatureFlags.SHOW_SAVED_FORMULAS && <SavedFormula />}
     </div>
   );
 };

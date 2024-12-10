@@ -1,3 +1,11 @@
+export const FeatureFlags = {
+  SHOW_PREVIEW: true,
+  SHOW_SAVED_FORMULAS: true,
+  SHOW_SLIDER: true,
+  ENABLE_SAVE_FORMULA: true,
+  ENABLE_FORMULA_DELETE: true
+};
+
 export const isOnlyNumbers = (value?: string) => {
   const onlyNumbers = new RegExp("^[0-9]+$");
   return value && value.trim() && onlyNumbers.test(value);
