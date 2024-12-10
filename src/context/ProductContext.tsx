@@ -1,8 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { Product } from "../types/products";
 
 interface ProductContextType {
-  setProducts: (products: Product[]) => void;
   getProducts: () => Product[] | undefined;
   getProduct: (productId?: number | string) => Product | undefined;
   setSortByName: (sort: string) => void;
@@ -23,6 +22,7 @@ interface SortFilter {
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
 
+
 export const useProduct = () => {
   const context = useContext(ProductContext);
   if (!context) {
@@ -42,12 +42,13 @@ export const ProductsProvider: React.FC<Props> = ({ children }) => {
 
   // generating products at the time of load.
   useEffect(() => {
-    generateProducts().then((results) => {
+    console.log('REDNERING FROM CONTEXT')
+    generateProductsNew().then((results) => {
       setProductsItems(results || []);
     });
   }, []);
 
-  const generateProducts = async () => {
+  const generateProductsNew = useCallback(async () => {
     const resString = await fetch("https://fakestoreapi.com/products");
     const resArray = (await resString.json()) || [];
     return resArray.map(({ id, image, description, price, title }: any) => {
@@ -61,11 +62,24 @@ export const ProductsProvider: React.FC<Props> = ({ children }) => {
         discountPercent: 50,
       };
     });
-  };
+  }, [])
 
-  const setProducts = (products: Product[]) => {
-    setProductsItems(products);
-  };
+  // const generateProducts = async () => {
+  //   // return [];
+  //   const resString = await fetch("https://fakestoreapi.com/products");
+  //   const resArray = (await resString.json()) || [];
+  //   return resArray.map(({ id, image, description, price, title }: any) => {
+  //     return {
+  //       id,
+  //       picture: image,
+  //       name: title,
+  //       description,
+  //       offerPrice: price / 2,
+  //       actualPrice: price,
+  //       discountPercent: 50,
+  //     };
+  //   });
+  // };
 
   const getProduct = (productId?: number | string) => {
     return productsItems.find((product) => product.id == productId);
@@ -129,7 +143,6 @@ export const ProductsProvider: React.FC<Props> = ({ children }) => {
   return (
     <ProductContext.Provider
       value={{
-        setProducts,
         getProducts,
         getProduct,
         setSortByName,

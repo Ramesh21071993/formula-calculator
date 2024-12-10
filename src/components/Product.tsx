@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { Product } from "../types/products";
 
 interface ProductProps {
@@ -12,8 +12,11 @@ const ProductDetails: React.FC<ProductProps> = ({
   product,
   showImage = true,
   showButton = true,
-  onBuyClick = () => {},
+  onBuyClick = () => {}
 }) => {
+
+  console.log('RE RENDER')
+
   if (!product) {
     return <></>;
   }
@@ -43,4 +46,4 @@ const ProductDetails: React.FC<ProductProps> = ({
   );
 };
 
-export default ProductDetails;
+export default memo(ProductDetails);

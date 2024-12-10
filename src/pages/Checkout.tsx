@@ -45,7 +45,7 @@ const Checkout: React.FC = () => {
     }
 
     //Address validation
-    if (!inputData.address) newErrors.address = "Address is required";
+    if (!inputData.address.trim()) newErrors.address = "Address is required";
 
     //Email Validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

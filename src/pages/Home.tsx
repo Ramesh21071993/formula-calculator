@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Profiler, useCallback, useState } from "react";
 import ProductDetails from "../components/Product";
 import { useNavigate } from "react-router-dom";
 import { useProduct } from "../context/ProductContext";
@@ -11,15 +11,30 @@ const Home: React.FC = () => {
     getSortFilter,
     setSortByName,
     setSortByPrice,
-    setSearch,
+    setSearch
   } = useProduct();
+
+  const [sortFilter, setSortFilter] = useState<any>({
+    sortByName: "",
+    sortByPrice: "",
+    searchTerm: ""
+  });
 
   const products = getProducts();
   const sortFilters = getSortFilter();
 
-  const onBuyClick = (productId: number) => {
-    navigate(`/checkout/${productId}`);
+  const handleSort = (key: any, value: any) => {
+    setSortFilter({ ...sortFilter, [key]: value });
   };
+
+  const onBuyClick = useCallback(
+    (productId: any) => {
+      navigate(`/checkout/${productId}`);
+    },
+    [navigate]
+  );
+
+  console.log("RENDERING");
 
   return (
     <div>
@@ -31,7 +46,7 @@ const Home: React.FC = () => {
             <select
               id="sortByPrice"
               value={sortFilters.sortByPrice}
-              onChange={(e) => setSortByPrice(e.target.value)}
+              onChange={(e) => handleSort("sortByPrice", e.target.value)}
             >
               <option value="">Select</option>
               <option value="lowToHigh">Low to High</option>
@@ -43,7 +58,7 @@ const Home: React.FC = () => {
             <select
               id="sortByName"
               value={sortFilters.sortByName}
-              onChange={(e) => setSortByName(e.target.value)}
+              onChange={(e) => handleSort("sortByName", e.target.value)}
             >
               <option value="">Select</option>
               <option value="asc">A to Z</option>
@@ -58,19 +73,26 @@ const Home: React.FC = () => {
               type="text"
               placeholder="Search by name..."
               value={sortFilters.searchTerm}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => handleSort("searchByName", e.target.value)}
             />
           </div>
         </div>
       </div>
       <div className="product-list">
-        {(products || []).map((product: Product, index: number) => (
-          <ProductDetails
-            key={index}
-            product={product}
-            onBuyClick={onBuyClick}
-          />
-        ))}
+        <Profiler
+          id="products"
+          onRender={() => {
+            console.log("products loading");
+          }}
+        >
+          {(products || []).map((product: Product, index: number) => (
+            <ProductDetails
+              key={`PRODUCT_${product.id}`}
+              product={product}
+              onBuyClick={onBuyClick}
+            />
+          ))}
+        </Profiler>
         {!products?.length && <span>No Products found.</span>}
       </div>
     </div>
