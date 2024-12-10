@@ -47,13 +47,13 @@ const FormulaCalculator: React.FC = () => {
     let replacedFormulaWithValue = replaceVariableValue(inputs, formula);
 
     if (!replacedFormulaWithValue) {
-      return null; // Return NaN if the formula is invalid
+      return null; // Return null if the formula is invalid
     }
 
     // checking valid characters are entered in the formula
     if (!isValidFormula(replacedFormulaWithValue)) {
       setResultError("Formula contains invalid characters.");
-      return null; // Return NaN if the formula is invalid
+      return null; // Return null if the formula is invalid
     }
 
     try {
